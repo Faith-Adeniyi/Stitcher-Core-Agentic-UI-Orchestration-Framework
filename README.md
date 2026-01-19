@@ -1,5 +1,4 @@
-# Stitcher-Core-Agentic-UI-Orchestration-Framework
-
+```mermaid
 sequenceDiagram
     participant D as Data Source (JSON/CSV)
     participant O as Python Orchestrator
@@ -20,3 +19,4 @@ sequenceDiagram
     
     Note over O,UI: Step 4: Fullstack Delivery
     O->>UI: Stitched Production-Ready Site
+```
