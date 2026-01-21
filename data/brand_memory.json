@@ -1,1 +1,36 @@
-
+{
+  "brand_name": "Luxury Pet Spa",
+  "vibe": "Premium, Serene, Professional",
+  "services": [
+     {
+        "name": "Full Signature Grooming",
+        "price": "$85",
+        "description": "Head-to-tail pampering."
+    },
+    {
+        "name": "Puppy’s First Spa Day",
+        "price": "$55",
+        "description": "Gentle introduction to grooming for pups under 6 months."
+    },
+    {
+        "name": "Deep Tissue Pet Massage",
+        "price": "$45",
+        "description": "15-minute relaxation session for stress and joint relief."
+    },
+    {
+        "name": "Luxury Paw-dicure",
+        "price": "$25",
+        "description": "Nail filing, pad moisturizing, and optional pet-safe polish."
+    },
+    {
+        "name": "Teeth Brushing & Breath Mint",
+        "price": "$15",
+        "description": "Tartar control brushing with a refreshing dental treat."
+    }
+  ],
+  "contact": {
+    "phone": "555-0123",
+    "email": "hello@luxurypetspa.com",
+    "address": "123 Paws Lane, Beverly Hills"
+  }
+}
