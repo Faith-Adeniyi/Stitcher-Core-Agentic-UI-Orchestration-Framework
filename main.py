@@ -81,5 +81,8 @@ def run_agentic_pipeline(brand_name):
     logging.info(f"--- [PIPELINE SUCCESS] {brand_name} is now LIVE ---")
 
 if __name__ == "__main__":
-    # Execute with the updated Luxury Pet Spa brand data
-    run_agentic_pipeline("Luxury Pet Spa")
+    # --- Quick Configuration ---
+    # Change this variable to build a different brand
+    TARGET_BRAND = "Luxury Pet Spa" 
+    
+    run_agentic_pipeline(TARGET_BRAND)
