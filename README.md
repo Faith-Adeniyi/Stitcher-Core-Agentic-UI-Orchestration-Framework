@@ -28,10 +28,11 @@ graph TD
     %% Layer 5: Output
     G --> H[Production UI: index.html]
 
-    style C fill:#d1e7ff,stroke:#007bff,stroke-width:2px
-    style D fill:#fff3cd,stroke:#ffc107,stroke-width:2px
-    style E fill:#f8d7da,stroke:#dc3545,stroke-width:2px
-    style G fill:#d4edda,stroke:#28a745,stroke-width:2px
+    %% Muted Professional Styling
+    style C fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+    style D fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000
+    style E fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+    style G fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
 
 ```
 
