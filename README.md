@@ -65,11 +65,8 @@ graph TD
 ## 🚀 Deployment (8GB RAM Optimized)
 
 1. **Environment Setup:**
-```bash
-pip install -r requirements.txt
-
-```
-
+   ```bash
+   pip install -r requirements.txt
 
 2. **Local LLM:** Ensure [Ollama](https://ollama.ai/) is running with `llama3`.
 3. **Execute Pipeline:**
