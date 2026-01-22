@@ -86,3 +86,29 @@ python main.py
 * **Security:** Custom Regex-based Sanitization Middleware
 * **Styling:** Tailwind CSS (Modular Component Library)
 
+🗺️ Project Roadmap: The Path to Enterprise Readiness
+Phase 1: Foundation & Reliability (Current)
+
+    [x] Agentic Orchestration: Llama 3-powered layout planning.
+
+    [x] Self-Healing Loop: Autonomous HTML/Tailwind diagnostics and repair.
+
+    [x] Defense-in-Depth: Regex-based XSS mitigation and security logging.
+
+    [x] Hardware Optimization: Stable inference on 8GB RAM.
+
+Phase 2: Scalability & DX (Coming Next)
+
+    [ ] Dynamic CLI Implementation: Moving from hardcoded brand memory to a multi-tenant command-line interface.
+
+    [ ] Forensic Observability Dashboard: A centralized UI to visualize security audits and healing logs.
+
+    [ ] Component Library Expansion: Integrating shadcn/ui-inspired modular components for "Luxury" aesthetics.
+
+Phase 3: Production Hardening (Future)
+
+    [ ] Dockerization: Containerizing the engine for one-click deployment on cloud instances.
+
+    [ ] Memory-Augmented Research: Implementing RAG (Retrieval-Augmented Generation) for deeper brand analysis.
+
+    [ ] A/B Testing Agent: An autonomous agent to generate and compare two UI variations based on brand "vibe."
