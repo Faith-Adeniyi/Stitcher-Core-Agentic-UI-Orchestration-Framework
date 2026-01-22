@@ -86,7 +86,7 @@ python main.py
 * **Security:** Custom Regex-based Sanitization Middleware
 * **Styling:** Tailwind CSS (Modular Component Library)
 
-🗺️ Project Roadmap: The Path to Enterprise Readiness
+## 🗺️ Project Roadmap: The Path to Enterprise Readiness
 Phase 1: Foundation & Reliability (Current)
 
     [x] Agentic Orchestration: Llama 3-powered layout planning.
