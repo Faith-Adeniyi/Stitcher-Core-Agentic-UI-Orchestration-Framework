@@ -21,9 +21,19 @@ class AgenticGuardian:
         """
         Main Security Loop: Validates Integrity & Sanitizes Input.
         """
+        # Ensure raw_content is a string before processing
+        if isinstance(raw_content, list):
+            logging.info(f"SECURITY: Converting list payload to string for {component_id}")
+            raw_content = str(raw_content)
+
         # 1. DOS PREVENTION: Audit payload size before processing
-        if len(raw_content.encode('utf-8')) > self.max_payload_size:
-            logging.critical(f"DoS Attempt/Resource Bloat Blocked: {component_id}")
+        try:
+            payload_size = len(raw_content.encode('utf-8'))
+            if payload_size > self.max_payload_size:
+                logging.critical(f"DoS Attempt/Resource Bloat Blocked: {component_id}")
+                return ""
+        except AttributeError as e:
+            logging.error(f"SECURITY ERROR: Encoding failed for {component_id}. Data type: {type(raw_content)}")
             return ""
 
         # 2. XSS MITIGATION: Sanitize malicious scripting
