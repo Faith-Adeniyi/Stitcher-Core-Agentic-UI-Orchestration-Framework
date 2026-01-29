@@ -8,7 +8,7 @@ class UIOrchestrator:
     Uses local LLMs to reason through brand data and select 
     the optimal UI components and layout structure.
     """
-    def __init__(self, model="llama3"):
+    def __init__(self, model="llama3.2:1b"):
         self.model = model
         self.system_prompt = (
             "You are a Senior Web Architect. Your task is to analyze business data "
