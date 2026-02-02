@@ -1,3 +1,31 @@
+# =================================================================
+# PROJECT: Stitcher-Core
+# DESCRIPTION: Secure exclusion list for Agentic Frameworks.
+# =================================================================
+
+# Python bytecode and execution cache
 __pycache__/
-*.log
+*.py[cod]
+*$py.class
+
+# Local Environments and Virtualization
+venv/
+env/
 .env
+
+# Build Artifacts
+# Preserves the directory structure without tracking generated site files.
+output/*
+!output/.gitkeep
+
+# Local Data and Intelligence
+# Brand memory is kept local to ensure data privacy and sovereignty.
+data/brand_memory.json
+
+# System Logs and Debugging
+*.log
+npm-debug.log*
+
+# OS-Specific Files (Crucial for cross-platform collaboration)
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+project:
+  name: "Stitcher-Core Portfolio"
+  version: "1.0.0"
+
+paths:
+  templates: "templates/components"
+  output: "output"
+  telemetry: "data/telemetry_report.json"
+
+# This will eventually be replaced by the UI/UX Agent's output
+active_design:
+  theme_color: "#6366f1"
+  font_family: "Inter, sans-serif"
+  is_3d_enabled: true

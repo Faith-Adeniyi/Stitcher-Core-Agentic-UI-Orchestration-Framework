@@ -1,46 +1,74 @@
 import re
+import json
+import os
 import logging
 
 class AgenticGuardian:
     """
-    SECURITY MIDDLEWARE: Treats AI-generated code as untrusted user input.
-    Implements Defense-in-Depth to ensure secure UI assembly.
+    SECURITY MIDDLEWARE: 
+    Treats AI-generated content as untrusted input. Implements Defense-in-Depth 
+    protocols to ensure secure UI assembly through sanitization and size auditing.
     """
-    def __init__(self):
-        # Prevention of XSS & Injection Attacks
-        self.blacklisted_patterns = [
-            r"<script.*?>",   # JavaScript Injection
-            r"onload=",       # Event Handler Injection
-            r"onerror=",      # Common XSS vector
-            r"<iframe.*?>",   # Clickjacking/Redirection protection
-            r"javascript:"    # Protocol-based execution
-        ]
-        self.max_payload_size = 500000 # DoS Mitigation: 500KB Limit
+    def __init__(self, config=None, manifest_path="project_manifest.json"):
+        """
+        Initializes the Guardian utilizing security policies defined in the manifest.
+        """
+        self.logger = logging.getLogger("StitcherCore.Security")
+
+        # Load security configuration from external manifest
+        if config is None and os.path.exists(manifest_path):
+            try:
+                with open(manifest_path, 'r', encoding='utf-8') as f:
+                    full_manifest = json.load(f)
+                    self.config = full_manifest.get("security_settings", {})
+            except Exception as e:
+                self.logger.error(f"Security: Policy ingestion failure: {e}")
+                self.config = {}
+        else:
+            self.config = config or {}
+
+        # Set operational constraints
+        self.max_payload_size = self.config.get("max_payload_size", 500000)
+        self.patterns = self.config.get("blacklisted_patterns", [])
 
     def audit_and_sanitize(self, raw_content, component_id):
         """
-        Main Security Loop: Validates Integrity & Sanitizes Input.
+        Main Security Loop: Validates data integrity and sanitizes malicious vectors.
+        
+        Args:
+            raw_content (str/list): The data payload requiring inspection.
+            component_id (str): Identifier for the component under audit.
+            
+        Returns:
+            str: The sanitized and validated content string.
         """
-        # Ensure raw_content is a string before processing
+        # Ensure type safety by converting complex objects to strings
         if isinstance(raw_content, list):
-            logging.info(f"SECURITY: Converting list payload to string for {component_id}")
+            self.logger.info(f"Security: Coercing list payload to string for {component_id}")
             raw_content = str(raw_content)
 
-        # 1. DOS PREVENTION: Audit payload size before processing
+        # 1. DOS PREVENTION: Audit payload size
         try:
             payload_size = len(raw_content.encode('utf-8'))
             if payload_size > self.max_payload_size:
-                logging.critical(f"DoS Attempt/Resource Bloat Blocked: {component_id}")
+                self.logger.critical(f"Security: Payload size violation blocked for {component_id}")
                 return ""
-        except AttributeError as e:
-            logging.error(f"SECURITY ERROR: Encoding failed for {component_id}. Data type: {type(raw_content)}")
+        except (AttributeError, UnicodeEncodeError) as e:
+            self.logger.error(f"Security: Integrity check failure for {component_id}: {e}")
             return ""
 
-        # 2. XSS MITIGATION: Sanitize malicious scripting
+        # 2. XSS MITIGATION: Filter blacklisted injection patterns
         sanitized = raw_content
-        for pattern in self.blacklisted_patterns:
+        for pattern in self.patterns:
             if re.search(pattern, sanitized, re.IGNORECASE):
-                logging.warning(f"Injection Pattern Blocked in {component_id}: {pattern}")
+                self.logger.warning(f"Security: Malicious pattern intercepted in {component_id}")
                 sanitized = re.sub(pattern, "", sanitized, flags=re.IGNORECASE)
 
         return sanitized
+
+if __name__ == "__main__":
+    # Internal validation logic for security policy enforcement
+    guardian = AgenticGuardian()
+    sample_input = "<script>alert('XSS')</script> Valid Content"
+    result = guardian.audit_and_sanitize(sample_input, "TEST_UNIT")
+    print(f"Sanitization Result: {result}")

@@ -1,81 +1,119 @@
 import os
 import logging
 import ast
+import json
 
 class AssemblyEngine:
     """
-    ENGINE LAYER: The execution arm of the framework.
-    Responsible for the deterministic assembly of sanitized 
-    HTML components into a final production-ready document.
+    ENGINE LAYER:
+    Acts as the primary execution arm for deterministic UI assembly.
+    Orchestrates the concatenation of sanitized HTML components into a 
+    production-ready document based on AI-generated architectural plans.
     """
-    def __init__(self):
-        # Configuration for source and distribution paths
-        self.components_path = "templates/components/"
-        self.output_path = "output/index.html"
-        self.base_template = "templates/base.html"
+    def __init__(self, config=None, manifest_path="project_manifest.json"):
+        """
+        Initializes the Engine utilizing path configurations sourced from the global manifest.
+        """
+        self.logger = logging.getLogger("StitcherCore.Engine")
         
-        # Ensure output directory exists to maintain system integrity
-        os.makedirs(os.path.dirname(self.output_path), exist_ok=True)
+        # Load configuration from manifest to maintain architectural decoupling
+        if config is None and os.path.exists(manifest_path):
+            try:
+                with open(manifest_path, 'r', encoding='utf-8') as f:
+                    full_manifest = json.load(f)
+                    self.config = full_manifest.get("engine_settings", {})
+            except Exception as e:
+                self.logger.error(f"Engine: Configuration ingestion failure: {e}")
+                self.config = {}
+        else:
+            self.config = config or {}
+
+        # Define operational paths with robust fallbacks
+        self.components_path = self.config.get("components_path", "templates/components/")
+        self.output_path = self.config.get("output_path", "output/index.html")
+        self.base_template = self.config.get("base_template", "templates/base.html")
+        self.encoding = self.config.get("encoding", "utf-8")
+        
+        # Ensure target distribution directory exists prior to assembly
+        output_dir = os.path.dirname(self.output_path)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
 
     def stitch_all(self, ui_plan):
         """
-        Takes the structural plan from the Orchestrator and 
-        physically assembles the index.html file.
+        Executes the assembly sequence by iterating through the validated UI plan.
+        
+        Args:
+            ui_plan (list/str): The ordered sequence of component identifiers.
+            
+        Returns:
+            str: The file path of the successfully assembled document.
         """
-        logging.info("Engine: Commencing deterministic assembly sequence...")
+        self.logger.info("Engine: Initiating deterministic assembly sequence...")
         assembled_content = ""
 
-        # VALIDATION: Ensure ui_plan is an iterable list.
-        # If the LLM returns a string representation of a list, convert it safely.
+        # TYPE VALIDATION: Safely handle string-serialized list objects from inference
         if isinstance(ui_plan, str):
             try:
-                logging.info("Engine: String-based plan detected. Attempting type coercion to list.")
+                self.logger.info("Engine: Coercing string-based plan to iterable list.")
                 ui_plan = ast.literal_eval(ui_plan)
             except (ValueError, SyntaxError):
-                logging.error("Engine: Failed to parse plan string. Plan is malformed.")
+                self.logger.error("Engine: Failed to parse plan string. Input is malformed.")
                 ui_plan = []
 
-        # 1. Iterate through the validated, AI-ordered plan
+        # 1. Component Iteration Logic
         if isinstance(ui_plan, list):
             for component_name in ui_plan:
                 file_name = f"{component_name}.html"
                 full_path = os.path.join(self.components_path, file_name)
 
-                # 2. Integrity Check: Verify component existence prior to I/O
+                # 2. Resource Verification
                 if os.path.exists(full_path):
-                    logging.info(f"Engine: Stitching component: {file_name}")
-                    with open(full_path, 'r', encoding='utf-8') as f:
+                    self.logger.info(f"Engine: Integrating component: {file_name}")
+                    with open(full_path, 'r', encoding=self.encoding) as f:
                         content = f.read()
+                        # Injecting visual separators for production-ready code organization
                         assembled_content += f"\n\n\n"
                         assembled_content += content
                 else:
-                    logging.warning(f"Engine: Resource {file_name} not found in {self.components_path}. Skipping...")
+                    self.logger.warning(f"Engine: Resource {file_name} not found in {self.components_path}. Skipping...")
         else:
-            logging.critical("Engine: Assembly aborted. Provided UI plan is not a valid list.")
+            self.logger.critical("Engine: Assembly sequence aborted. Invalid UI plan format.")
 
-        # 3. Final Compilation and Wrapping
+        # 3. Document Finalization
         return self._finalize_document(assembled_content)
 
     def _finalize_document(self, body_content):
-        """Wraps the assembled body content into the master HTML skeleton."""
+        """
+        Wraps synthesized content into the master HTML skeleton.
+        """
         try:
-            # Injection logic for the master layout
+            # Layout Injection Logic
             if os.path.exists(self.base_template):
-                with open(self.base_template, 'r', encoding='utf-8') as f:
+                with open(self.base_template, 'r', encoding=self.encoding) as f:
                     skeleton = f.read()
-                # Use a professional placeholder replacement strategy
+                # Deterministic replacement of the content placeholder
                 final_html = skeleton.replace("{{CONTENT}}", body_content)
             else:
-                logging.warning("Engine: Base template missing. Utilizing fallback skeleton.")
-                final_html = f"<!DOCTYPE html><html><body>{body_content}</body></html>"
+                self.logger.warning("Engine: Base layout missing. Utilizing fallback HTML5 skeleton.")
+                final_html = f"<!DOCTYPE html>\n<html>\n<body>\n{body_content}\n</body>\n</html>"
 
-            # Write final production-ready file
-            with open(self.output_path, 'w', encoding='utf-8') as f:
+            # Persist finalized artifact to disk
+            with open(self.output_path, 'w', encoding=self.encoding) as f:
                 f.write(final_html)
             
-            logging.info(f"Engine: Assembly successful. Output persisted to {self.output_path}")
+            self.logger.info(f"Engine: Assembly successful. Production artifact persisted to {self.output_path}")
             return self.output_path
             
         except Exception as e:
-            logging.error(f"Engine: Critical failure during document finalization: {e}")
+            self.logger.error(f"Engine: Critical failure during document finalization: {e}")
             raise
+
+if __name__ == "__main__":
+    """
+    INTERNAL MODULE VALIDATION:
+    Performs a controlled test of the assembly sequence using a standard manifest.
+    """
+    engine_test = AssemblyEngine()
+    mock_plan = ["hero", "footer"]
+    engine_test.stitch_all(mock_plan)

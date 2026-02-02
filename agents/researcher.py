@@ -1,38 +1,78 @@
 import json
+import os
+import logging
 
 class WebResearcher:
     """
-    Agent responsible for ingesting raw business data 
-    and formatting it for the Stitcher-Core orchestrator.
+    INGESTION LAYER:
+    Responsible for sourcing, sanitizing, and structuring entity-specific data.
+    Acts as the primary data interface for the Stitcher-Core pipeline.
     """
-    def __init__(self, brand_name):
-        self.brand_name = brand_name
-        self.memory_file = "data/brand_memory.json"
+    def __init__(self, config=None, manifest_path="project_manifest.json"):
+        """
+        Initializes the Researcher with parameters sourced from the global manifest.
+        """
+        # Load configuration from manifest if not explicitly provided
+        if config is None and os.path.exists(manifest_path):
+            try:
+                with open(manifest_path, 'r') as f:
+                    full_manifest = json.load(f)
+                    self.config = full_manifest.get("researcher_settings", {})
+                logging.info(f"RESEARCHER: Configuration successfully ingested from {manifest_path}")
+            except Exception as e:
+                logging.error(f"RESEARCHER: Manifest ingestion failure: {e}")
+                self.config = {}
+        else:
+            self.config = config or {}
+
+        # Define data source and memory persistence paths
+        self.source_data_path = self.config.get("source_data", "data/brand_memory.json")
+        self.depth = self.config.get("depth", "standard")
 
     def extract_services(self):
         """
-        In a full build, this would use BeautifulSoup/Crawl4AI.
-        For Phase 1, we define the structured data for the Pet Spa.
+        Sourcing Logic: Retrieves structured data from the local memory layer.
+        In advanced iterations, this module integrates BeautifulSoup/Crawl4AI for live scraping.
         """
-        # Mocking the scraped data from the 'Luxury Pet Spa' implementation
-        raw_data = {
-            "brand": self.brand_name,
-            "services": [
-                {"name": "Full Grooming", "price": "$85", "duration": "2hrs"},
-                {"name": "Puppy Social", "price": "$45", "duration": "1hr"},
-                {"name": "Medicated Bath", "price": "$60", "duration": "45mins"}
-            ],
-            "vibe": "High-end, minimalist, serene"
+        logging.info(f"RESEARCHER: Commencing data extraction from {self.source_data_path}")
+        
+        try:
+            if os.path.exists(self.source_data_path):
+                with open(self.source_data_path, 'r', encoding='utf-8') as f:
+                    extracted_data = json.load(f)
+                logging.info("RESEARCHER: Data extraction successful.")
+                return extracted_data
+            else:
+                logging.warning(f"RESEARCHER: Source data not found at {self.source_data_path}. Utilizing fallback schema.")
+                return self._get_fallback_data()
+        except Exception as e:
+            logging.error(f"RESEARCHER: Extraction error: {e}")
+            return self._get_fallback_data()
+
+    def _get_fallback_data(self):
+        """Internal safety mechanism to ensure pipeline continuity."""
+        return {
+            "brand": "Stitcher-Core Project",
+            "services": [],
+            "vibe": "Professional, Scalable, Agentic"
         }
-        return raw_data
 
     def update_brand_memory(self, data):
-        """Saves extracted data to the local memory layer."""
-        with open(self.memory_file, 'w') as f:
-            json.dump(data, f, indent=4)
-        print(f"Memory updated for {self.brand_name}")
+        """
+        Persistence Logic: Updates the local repository with sanitized data structures.
+        """
+        try:
+            # Ensure the directory exists prior to file I/O
+            os.makedirs(os.path.dirname(self.source_data_path), exist_ok=True)
+            
+            with open(self.source_data_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
+            logging.info(f"RESEARCHER: Local memory layer updated at {self.source_data_path}")
+        except Exception as e:
+            logging.error(f"RESEARCHER: Memory update failure: {e}")
 
 if __name__ == "__main__":
-    agent = WebResearcher("Luxury Pet Spa")
-    extracted = agent.extract_services()
-    agent.update_brand_memory(extracted)
+    # Unit test demonstrating generic execution
+    agent = WebResearcher()
+    data = agent.extract_services()
+    print(f"Extracted Brand: {data.get('brand')}")

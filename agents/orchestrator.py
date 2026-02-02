@@ -1,55 +1,103 @@
 import json
-import ollama # Designed for 8GB RAM local inference
+import os
+import ollama
 import logging
 
 class UIOrchestrator:
     """
-    COGNITIVE LAYER: The 'Brain' of Stitcher-Core.
-    Uses local LLMs to reason through brand data and select 
-    the optimal UI components and layout structure.
+    COGNITIVE ORCHESTRATION LAYER:
+    Utilizes a dual-model inference strategy to separate architectural reasoning 
+    from narrative brand development.
     """
-    def __init__(self, model="llama3.2:1b"):
-        self.model = model
+    def __init__(self, config=None, manifest_path="project_manifest.json"):
+        """
+        Initializes the Orchestrator utilizing configurations from the global manifest.
+        """
+        self.logger = logging.getLogger("StitcherCore.Orchestrator")
+        
+        # Load from manifest if no specific config is injected
+        if config is None and os.path.exists(manifest_path):
+            try:
+                with open(manifest_path, 'r', encoding='utf-8') as f:
+                    full_manifest = json.load(f)
+                    self.config = full_manifest.get("orchestrator_settings", {})
+            except Exception as e:
+                self.logger.error(f"ORCHESTRATOR: Manifest load failure: {e}")
+                self.config = {}
+        else:
+            self.config = config or {}
+
+        # Dual-Model Mapping
+        self.coder_model = self.config.get("model", "qwen2.5-coder:7b")
+        self.writer_model = self.config.get("writing_model", "llama3.2:1b")
+        
+        self.available_components = self.config.get("available_components", ["hero", "footer"])
+        self.role = self.config.get("role", "Web Architect")
+        
         self.system_prompt = (
-            "You are a Senior Web Architect. Your task is to analyze business data "
-            "and return a structured JSON plan for a website layout. "
-            "Use only the provided component names: 'hero', 'pricing', 'features', 'footer'."
+            f"You are a {self.role}. Return a structured JSON plan for a website layout. "
+            f"Utilize only these components: {self.available_components}."
         )
 
     def generate_plan(self, brand_data):
         """
-        Consults the Local LLM to decide which components 
-        best represent the brand's services and 'vibe'.
+        Uses the specialized CODER model to determine the optimal component sequence.
         """
-        logging.info(f"Orchestrator reasoning with {self.model}...")
+        self.logger.info(f"ORCHESTRATOR: Initiating structural inference via {self.coder_model}")
         
-        prompt = f"""
-        Analyze this business data: {json.dumps(brand_data)}
-        Return a JSON list of components in the order they should appear.
-        Example: ["hero", "features", "pricing", "footer"]
-        """
+        prompt = (
+            f"Contextual Business Data: {json.dumps(brand_data)}\n"
+            "Requirement: Return a JSON array representing the sequential order of UI components.\n"
+            f"Format: ['component1', 'component2', ...]"
+        )
 
         try:
-            # Running locally on 8GB RAM requires stream=False for stability
             response = ollama.generate(
-                model=self.model,
+                model=self.coder_model,
                 system=self.system_prompt,
                 prompt=prompt,
-                format="json" # Ensures we get a machine-readable plan
+                format="json"
             )
             
-            # Parsing the LLM decision
-            plan = json.loads(response['response'])
-            logging.info(f"Orchestrator Plan finalized: {plan}")
+            plan = json.loads(response.get('response', '[]'))
+            
+            if not isinstance(plan, list):
+                raise ValueError("Inference returned non-list structure.")
+                
+            self.logger.info(f"ORCHESTRATOR: Design blueprint finalized: {plan}")
             return plan
 
         except Exception as e:
-            logging.error(f"Orchestration Logic Failure: {e}")
-            # Fallback Plan: Ensures system workability if LLM fails
-            return ["hero", "pricing", "footer"]
+            self.logger.error(f"ORCHESTRATOR: Structural inference failure: {e}")
+            return [self.available_components[0], self.available_components[-1]]
+
+    def refine_copy(self, raw_text):
+        """
+        Uses the specialized WRITER model to professionalize brand narratives.
+        """
+        self.logger.info(f"ORCHESTRATOR: Refining narrative via {self.writer_model}")
+        try:
+            response = ollama.generate(
+                model=self.writer_model,
+                prompt=f"Rewrite the following for a senior AI Engineer portfolio. Keep it concise: {raw_text}"
+            )
+            return response['response']
+        except Exception as e:
+            self.logger.error(f"ORCHESTRATOR: Narrative refinement failure: {e}")
+            return raw_text
 
 if __name__ == "__main__":
-    # Internal Test
-    sample_data = {"brand": "Luxury Pet Spa", "vibe": "High-end"}
-    brain = UIOrchestrator()
-    print(brain.generate_plan(sample_data))
+    """
+    INTERNAL MODULE VALIDATION:
+    Tests the dual-model routing logic using default manifest settings.
+    """
+    orchestrator = UIOrchestrator()
+    sample_data = {"brand": "Stitcher-Core", "niche": "Agentic AI"}
+    
+    # Test Coder Model
+    test_plan = orchestrator.generate_plan(sample_data)
+    print(f"Coder Plan: {test_plan}")
+    
+    # Test Writer Model
+    test_copy = orchestrator.refine_copy("I build cool AI things with python.")
+    print(f"Writer Refinement: {test_copy}")

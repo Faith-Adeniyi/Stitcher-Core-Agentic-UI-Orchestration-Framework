@@ -1,75 +1,60 @@
-# 🛠️ Stitcher-Core: Secure Agentic Web-Assembly Framework
+```markdown
+# Stitcher-Core: Autonomous Web Assembly Framework
+**Author:** Faith Adeniyi  
+**Status:** v1.0.0-Production (Refactored for Scalability)
 
-**Stitcher-Core** is a professional-grade, autonomous pipeline designed to transform raw business data into production-ready web interfaces using local LLMs. By decoupling reasoning (Agents) from execution (Core Engine), the framework achieves high-fidelity results on consumer-grade hardware (**8GB RAM**).
-
----
+## 🚀 Overview
+Stitcher-Core is a deterministic, agentic framework designed to orchestrate local LLMs (Ollama/Llama 3.2) for the automated assembly of high-fidelity web interfaces. By decoupling cognitive reasoning from physical file I/O, Stitcher-Core ensures secure, scalable, and self-healing UI deployment.
 
 ## 🏗️ System Architecture
+The framework operates via a multi-agent pipeline governed by a central project manifest:
 
-The framework follows a modular "Chain of Thought" architecture, ensuring that every piece of AI-generated content is researched, reasoned, debugged, and secured before assembly.
+* **Cognitive Layer (Orchestrator):** Reasons through brand intelligence to derive structural UI blueprints.
+* **Ingestion Layer (Researcher):** Sources and sanitizes entity-specific data.
+* **Assembly Layer (Engine):** Deterministically stitches HTML components into a master layout.
+* **Self-Healing Layer (Debugger/Guardian):** Intercepts structural hallucinations and enforces security protocols.
 
-```mermaid
 graph TD
-    %% Layer 1: Data Ingestion
-    A[Brand Data: JSON/CSV] --> B[WebResearcher Agent]
-    
-    %% Layer 2: Reasoning
-    B --> C[UIOrchestrator - The Brain]
-    C --> D{Agentic Debugger}
-    
-    %% Layer 3: Self-Healing & Safety
-    D -- "Surgical Patch" --> C
-    D -- "Validated Logic" --> E[AgenticGuardian - Security]
-    
-    %% Layer 4: Deterministic Assembly
-    E --> F[Component Editor - The Refiner]
-    F --> G[Assembly Engine - The Hands]
-    
-    %% Layer 5: Output
-    G --> H[Production UI: index.html]
+    A[Project Manifest] -->|Configures| B(Orchestrator)
+    B -->|Task Routing| C{Dual-Model Logic}
+    C -->|Narrative| D[Llama 3.2:1b]
+    C -->|Code/Structure| E[Qwen2.5-Coder:7b]
+    D & E -->|JSON Plan| F[Agentic Guardian]
+    F -->|Sanitization| G[Assembly Engine]
+    G -->|Stitching| H[Component Library]
+    H -->|Raw HTML| I[Debugger/Editor]
+    I -->|Polished Artifact| J[Production index.html]
 
-    %% Muted Professional Styling
-    style C fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
-    style D fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000
-    style E fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
-    style G fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000
+## 🛠️ Tech Stack
+* **Core:** Python 3.x
+* **AI Inference:** Ollama (Llama 3.2:1b)
+* **Frontend Logic:** Tailwind CSS, HTML5, Jinja-style templating
+* **Security:** Regex-based XSS mitigation & Payload Auditing
+
+## 🧠 Model Orchestration Strategy
+To maximize output quality while maintaining local performance, Stitcher-Core utilizes a bifurcated inference strategy:
+
+* **Logic & Syntax (Qwen2.5-Coder:7b):** Specialized for deterministic code generation, CSS architecture, and structural integrity.
+* **Narrative & Reasoning (Llama3.2:1b):** Optimized for brand analysis, copywriting, and "vibe" orchestration.
+
+## 📦 Installation & Usage
+1. **Clone the Repository:**
+   ```bash
+   git clone [https://github.com/Faith-Adeniyi/Stitcher-Core-Agentic-UI-Orchestration-Framework](https://github.com/Faith-Adeniyi/Stitcher-Core-Agentic-UI-Orchestration-Framework)
 
 ```
 
----
+2. **Initialize Local LLM:**
+```bash
+ollama pull llama3.2:1b
+ollama pull qwen2.5-coder:7b
 
-## 🧩 Framework Modules
-
-### **1. Cognitive Layer (Agents)**
-
-* **WebResearcher:** Extracts structured "Brand Memory" from unstructured sources.
-* **UIOrchestrator:** A decision-making agent that leverages **Ollama (Llama 3)** to determine optimal layout structures and component selection.
-
-### **2. Resilience & Safety Layer (Core)**
-
-* **Agentic Debugger (Self-Healing):** An autonomous loop that identifies structural failures (e.g., mismatched tags) and performs surgical patches without full code rewrites.
-* **AgenticGuardian (Security):** Implements **Defense-in-Depth**. Features include:
-* **XSS Prevention:** Input sanitization for malicious scripts and `<iframe>` injections.
-* **DoS Mitigation:** Resource guardrails to prevent memory exhaustion on 8GB systems.
-* **Forensic Logging:** Maintains `data/security_audit.log` for system observability.
+```
 
 
-
-### **3. Assembly & Refinement Layer**
-
-* **Component Editor:** Performs deterministic data injection (pricing, contact info) to eliminate LLM hallucinations.
-* **Assembly Engine:** A robust, path-validated builder that stitches modular HTML/Tailwind components into the final document.
-
----
-
-## 🚀 Deployment (8GB RAM Optimized)
-
-1. **Environment Setup:**
-   ```bash
-   pip install -r requirements.txt
-
-2. **Local LLM:** Ensure [Ollama](https://ollama.ai/) is running with `llama3`.
-3. **Execute Pipeline:**
+3. **Configure the Manifest:**
+Edit `project_manifest.json` to define your target UI components and design specs.
+4. **Execute Pipeline:**
 ```bash
 python main.py
 
@@ -77,41 +62,25 @@ python main.py
 
 
 
----
+## 🛡️ Professional Standards
 
-## 🛠️ Tech Stack
+This project adheres to **Enterprise-Grade** standards:
 
-* **Language:** Python 3.9+
-* **Inference:** Ollama (Local LLM Orchestration)
-* **Security:** Custom Regex-based Sanitization Middleware
-* **Styling:** Tailwind CSS (Modular Component Library)
-
-## 🗺️ Project Roadmap: The Path to Enterprise Readiness
-Phase 1: Foundation & Reliability (Current)
-
-    [x] Agentic Orchestration: Llama 3-powered layout planning.
-
-    [x] Self-Healing Loop: Autonomous HTML/Tailwind diagnostics and repair.
-
-    [x] Defense-in-Depth: Regex-based XSS mitigation and security logging.
-
-    [x] Hardware Optimization: Stable inference on 8GB RAM.
-
-Phase 2: Scalability & DX (Coming Next)
-
-    [ ] Dynamic CLI Implementation: Moving from hardcoded brand memory to a multi-tenant command-line interface.
-
-    [ ] Forensic Observability Dashboard: A centralized UI to visualize security audits and healing logs.
-
-    [ ] Component Library Expansion: Integrating shadcn/ui-inspired modular components for "Luxury" aesthetics.
-
-Phase 3: Production Hardening (Future)
-
-    [ ] Dockerization: Containerizing the engine for one-click deployment on cloud instances.
-
-    [ ] Memory-Augmented Research: Implementing RAG (Retrieval-Augmented Generation) for deeper brand analysis.
-
-    [ ] A/B Testing Agent: An autonomous agent to generate and compare two UI variations based on brand "vibe."
+* **Zero Hard-Coding:** All logic is manifest-driven for portability.
+* **Deterministic Safety:** Critical data injection bypasses stochastic AI processes.
+* **Self-Healing:** Autonomous patching of malformed HTML structures.
 
 ---
-*Status: Local development environment configured and synced.*
+
+## 🛡️ Security-First Protocols
+To counter the risks associated with stochastic AI code generation, Stitcher-Core implements a **Defensive Ingestion Layer**:
+
+* **Deterministic Scrubbing:** AI-generated plans are cross-referenced against a whitelist of approved components.
+* **Surgical Sanitization:** The `AgenticGuardian` module intercepts common web vulnerabilities (XSS, Script Injections) using regex-based forensic scans.
+* **Payload Auditing:** Strict size and type enforcement to prevent Denial of Service (DoS) vectors through malformed LLM outputs.
+
+*Built with precision. Optimized for the future of Agentic Web Development.*
+
+```
+
+---

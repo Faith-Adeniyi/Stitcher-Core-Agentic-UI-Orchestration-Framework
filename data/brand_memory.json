@@ -1,36 +1,25 @@
 {
-  "brand_name": "Luxury Pet Spa",
-  "vibe": "Premium, Serene, Professional",
-  "services": [
-     {
-        "name": "Full Signature Grooming",
-        "price": "$85",
-        "description": "Head-to-tail pampering."
-    },
-    {
-        "name": "Puppy’s First Spa Day",
-        "price": "$55",
-        "description": "Gentle introduction to grooming for pups under 6 months."
-    },
-    {
-        "name": "Deep Tissue Pet Massage",
-        "price": "$45",
-        "description": "15-minute relaxation session for stress and joint relief."
-    },
-    {
-        "name": "Luxury Paw-dicure",
-        "price": "$25",
-        "description": "Nail filing, pad moisturizing, and optional pet-safe polish."
-    },
-    {
-        "name": "Teeth Brushing & Breath Mint",
-        "price": "$15",
-        "description": "Tartar control brushing with a refreshing dental treat."
+    "brand_name": "Stitcher-Core: Secured Agentics",
+    "owner_name": "Faith Adeniyi",
+    "mission": "Pioneering secure, autonomous AI systems with a focus on defensive engineering.",
+    "core_pillars": [
+        {
+            "title": "Defensive AI Generation",
+            "description": "Utilizing deterministic auditing layers to mitigate AI hallucinations and secure output integrity."
+        },
+        {
+            "title": "Agentic Orchestration",
+            "description": "Orchestrating specialized LLMs (Qwen/Llama) via a central, manifest-driven control layer."
+        },
+        {
+            "title": "Privacy-First Deployment",
+            "description": "Leveraging local inference (Ollama) to ensure data sovereignty and eliminate external API vulnerabilities."
+        }
+    ],
+    "vibe": "Industrial-Cyber, Minimalist, High-Security",
+    "contact_info": {
+        "email": "faithadeniyi2026@gmail.com",
+        "github": "https://github.com/Faith-Adeniyi",
+        "linkedin": "www.linkedin.com/in/faith-adeniyi-a3979a195"
     }
-  ],
-  "contact": {
-    "phone": "555-0123",
-    "email": "hello@luxurypetspa.com",
-    "address": "123 Paws Lane, Beverly Hills"
-  }
 }
