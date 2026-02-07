@@ -39,10 +39,12 @@ class UIOrchestrator:
             f"Utilize only these components: {self.available_components}."
         )
 
-    def generate_plan(self, brand_data):
+    def generate_plan(self, brand_data, design_tokens):
         """
-        Uses the specialized CODER model to determine the optimal component sequence.
+        Analyzes brand intelligence alongside design constraints 
+        to architect a structural layout plan.
         """
+
         self.logger.info(f"ORCHESTRATOR: Initiating structural inference via {self.coder_model}")
         
         prompt = (

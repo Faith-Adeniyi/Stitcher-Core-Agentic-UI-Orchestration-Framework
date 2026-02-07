@@ -19,8 +19,7 @@ output/*
 !output/.gitkeep
 
 # Local Data and Intelligence
-# Brand memory is kept local to ensure data privacy and sovereignty.
-data/brand_memory.json
+data/
 
 # System Logs and Debugging
 *.log

@@ -1,86 +1,83 @@
 ```markdown
-# Stitcher-Core: Autonomous Web Assembly Framework
-**Author:** Faith Adeniyi  
-**Status:** v1.0.0-Production (Refactored for Scalability)
+# 🧵 Stitcher-Core | Agentic Web Assembly Framework
 
-## 🚀 Overview
-Stitcher-Core is a deterministic, agentic framework designed to orchestrate local LLMs (Ollama/Llama 3.2) for the automated assembly of high-fidelity web interfaces. By decoupling cognitive reasoning from physical file I/O, Stitcher-Core ensures secure, scalable, and self-healing UI deployment.
+**Project State:** MVP Phase (Sprint 2 Complete)  
+**Last Updated:** February 7, 2026  
+**Goal:** Reach "Job-Ready" Portfolio Status by March 2026.
 
-## 🏗️ System Architecture
-The framework operates via a multi-agent pipeline governed by a central project manifest:
+---
 
-* **Cognitive Layer (Orchestrator):** Reasons through brand intelligence to derive structural UI blueprints.
-* **Ingestion Layer (Researcher):** Sources and sanitizes entity-specific data.
-* **Assembly Layer (Engine):** Deterministically stitches HTML components into a master layout.
-* **Self-Healing Layer (Debugger/Guardian):** Intercepts structural hallucinations and enforces security protocols.
+## 🏗 System Architecture
+Stitcher-Core is a multi-agent framework designed to automate the transition from brand research to high-performance web deployment.
+```
 
+```mermaid
 graph TD
-    A[Project Manifest] -->|Configures| B(Orchestrator)
-    B -->|Task Routing| C{Dual-Model Logic}
-    C -->|Narrative| D[Llama 3.2:1b]
-    C -->|Code/Structure| E[Qwen2.5-Coder:7b]
-    D & E -->|JSON Plan| F[Agentic Guardian]
-    F -->|Sanitization| G[Assembly Engine]
-    G -->|Stitching| H[Component Library]
-    H -->|Raw HTML| I[Debugger/Editor]
-    I -->|Polished Artifact| J[Production index.html]
+    A[User CLI Entry] --> B{Design Source?}
+    
+    %% AI Path
+    B -->|Option 1: AI| C[Niche Research Agent]
+    C --> D[5-Variant Generator]
+    D --> E[Gallery Selection Hub]
+    E -->|User Selection| F[UI Orchestrator]
 
-## 🛠️ Tech Stack
-* **Core:** Python 3.x
-* **AI Inference:** Ollama (Llama 3.2:1b)
-* **Frontend Logic:** Tailwind CSS, HTML5, Jinja-style templating
-* **Security:** Regex-based XSS mitigation & Payload Auditing
+    %% Human Path
+    B -->|Option 2: Human| G[Figma/URL Ingestion]
+    G -->|Context Handoff| F
 
-## 🧠 Model Orchestration Strategy
-To maximize output quality while maintaining local performance, Stitcher-Core utilizes a bifurcated inference strategy:
-
-* **Logic & Syntax (Qwen2.5-Coder:7b):** Specialized for deterministic code generation, CSS architecture, and structural integrity.
-* **Narrative & Reasoning (Llama3.2:1b):** Optimized for brand analysis, copywriting, and "vibe" orchestration.
-
-## 📦 Installation & Usage
-1. **Clone the Repository:**
-   ```bash
-   git clone [https://github.com/Faith-Adeniyi/Stitcher-Core-Agentic-UI-Orchestration-Framework](https://github.com/Faith-Adeniyi/Stitcher-Core-Agentic-UI-Orchestration-Framework)
-
+    %% Engine Path
+    F -->|Layout Blueprint| H(AgenticGuardian)
+    H -->|Sanitized Plan| I(AssemblyEngine)
+    I --> J[Production index.html]
+    J --> K(AgenticDebugger)
+    K -->|Self-Healing| J
 ```
 
-2. **Initialize Local LLM:**
+---
+
+## 🚀 Core Features
+
+* **Autonomous Research Loop:** The `UIDesigner` performs real-time market research on your specified niche to ensure design competitiveness.
+* **Variant Selection Hub:** Generates 5 distinct design directions and hosts them in a local browser-based gallery for stakeholder approval.
+* **Human-Agent Collaboration:** Supports manual overrides via Figma or external design URLs.
+* **Resource Management:** Optimized "Patch" mode to bypass high-compute generation cycles when making minor iterative changes.
+
+---
+
+## 🛠 Setup & Execution
+
+### 1. Requirements
+
+* **Python 3.10+**
+* **Ollama** (Models: `qwen2.5-coder:7b` & `llama3.2:1b`)
+* **Tailwind CSS** (via CDN in generated files)
+
+### 2. Installation
+
 ```bash
-ollama pull llama3.2:1b
-ollama pull qwen2.5-coder:7b
+git clone [https://github.com/YOUR_USERNAME/stitcher-core.git](https://github.com/YOUR_USERNAME/stitcher-core.git)
+cd stitcher-core
+pip install -r requirements.txt
 
 ```
 
+### 3. Running the Pipeline
 
-3. **Configure the Manifest:**
-Edit `project_manifest.json` to define your target UI components and design specs.
-4. **Execute Pipeline:**
 ```bash
 python main.py
 
 ```
 
-
-
-## 🛡️ Professional Standards
-
-This project adheres to **Enterprise-Grade** standards:
-
-* **Zero Hard-Coding:** All logic is manifest-driven for portability.
-* **Deterministic Safety:** Critical data injection bypasses stochastic AI processes.
-* **Self-Healing:** Autonomous patching of malformed HTML structures.
+*Follow the CLI prompts to choose between **Full Overhaul**, **Figma Override**, or **Resource Patch**.*
 
 ---
 
-## 🛡️ Security-First Protocols
-To counter the risks associated with stochastic AI code generation, Stitcher-Core implements a **Defensive Ingestion Layer**:
+🛡 System Integrity & Engineering Standards
 
-* **Deterministic Scrubbing:** AI-generated plans are cross-referenced against a whitelist of approved components.
-* **Surgical Sanitization:** The `AgenticGuardian` module intercepts common web vulnerabilities (XSS, Script Injections) using regex-based forensic scans.
-* **Payload Auditing:** Strict size and type enforcement to prevent Denial of Service (DoS) vectors through malformed LLM outputs.
+    Deterministic State Management: Implements strict type-safety and standardized logic flows to ensure predictable agent behavior across high-latency LLM calls.
 
-*Built with precision. Optimized for the future of Agentic Web Development.*
+    Agentic Observability: Comprehensive logging at the "Cognitive Layer" provides a full audit trail of agent reasoning, from niche research to final assembly.
 
-```
+    Computational Resource Optimization: Features a tiered execution strategy (Overhaul vs. Patch) to minimize token consumption and local compute overhead.
 
----
+    Dynamic Context Injection: Utilizes BOLD UPPERCASE semantic placeholders to ensure safe and accurate data hydration during the final assembly phase.

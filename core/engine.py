@@ -1,119 +1,131 @@
 import os
-import logging
-import ast
 import json
+import logging
+import ollama
 
 class AssemblyEngine:
     """
-    ENGINE LAYER:
-    Acts as the primary execution arm for deterministic UI assembly.
-    Orchestrates the concatenation of sanitized HTML components into a 
-    production-ready document based on AI-generated architectural plans.
+    CONSTRUCTION LAYER:
+    The deterministic assembly point of the framework. Translates architectural 
+    plans and design tokens into production-ready HTML/CSS artifacts.
     """
-    def __init__(self, config=None, manifest_path="project_manifest.json"):
+    def __init__(self, manifest_path="project_manifest.json"):
         """
-        Initializes the Engine utilizing path configurations sourced from the global manifest.
-        """
-        self.logger = logging.getLogger("StitcherCore.Engine")
-        
-        # Load configuration from manifest to maintain architectural decoupling
-        if config is None and os.path.exists(manifest_path):
-            try:
-                with open(manifest_path, 'r', encoding='utf-8') as f:
-                    full_manifest = json.load(f)
-                    self.config = full_manifest.get("engine_settings", {})
-            except Exception as e:
-                self.logger.error(f"Engine: Configuration ingestion failure: {e}")
-                self.config = {}
-        else:
-            self.config = config or {}
-
-        # Define operational paths with robust fallbacks
-        self.components_path = self.config.get("components_path", "templates/components/")
-        self.output_path = self.config.get("output_path", "output/index.html")
-        self.base_template = self.config.get("base_template", "templates/base.html")
-        self.encoding = self.config.get("encoding", "utf-8")
-        
-        # Ensure target distribution directory exists prior to assembly
-        output_dir = os.path.dirname(self.output_path)
-        if output_dir:
-            os.makedirs(output_dir, exist_ok=True)
-
-    def stitch_all(self, ui_plan):
-        """
-        Executes the assembly sequence by iterating through the validated UI plan.
-        
-        Args:
-            ui_plan (list/str): The ordered sequence of component identifiers.
-            
-        Returns:
-            str: The file path of the successfully assembled document.
-        """
-        self.logger.info("Engine: Initiating deterministic assembly sequence...")
-        assembled_content = ""
-
-        # TYPE VALIDATION: Safely handle string-serialized list objects from inference
-        if isinstance(ui_plan, str):
-            try:
-                self.logger.info("Engine: Coercing string-based plan to iterable list.")
-                ui_plan = ast.literal_eval(ui_plan)
-            except (ValueError, SyntaxError):
-                self.logger.error("Engine: Failed to parse plan string. Input is malformed.")
-                ui_plan = []
-
-        # 1. Component Iteration Logic
-        if isinstance(ui_plan, list):
-            for component_name in ui_plan:
-                file_name = f"{component_name}.html"
-                full_path = os.path.join(self.components_path, file_name)
-
-                # 2. Resource Verification
-                if os.path.exists(full_path):
-                    self.logger.info(f"Engine: Integrating component: {file_name}")
-                    with open(full_path, 'r', encoding=self.encoding) as f:
-                        content = f.read()
-                        # Injecting visual separators for production-ready code organization
-                        assembled_content += f"\n\n\n"
-                        assembled_content += content
-                else:
-                    self.logger.warning(f"Engine: Resource {file_name} not found in {self.components_path}. Skipping...")
-        else:
-            self.logger.critical("Engine: Assembly sequence aborted. Invalid UI plan format.")
-
-        # 3. Document Finalization
-        return self._finalize_document(assembled_content)
-
-    def _finalize_document(self, body_content):
-        """
-        Wraps synthesized content into the master HTML skeleton.
+        Initializes the engine with manifest-driven configurations for 
+        the specialized Coder model.
         """
         try:
-            # Layout Injection Logic
-            if os.path.exists(self.base_template):
-                with open(self.base_template, 'r', encoding=self.encoding) as f:
-                    skeleton = f.read()
-                # Deterministic replacement of the content placeholder
-                final_html = skeleton.replace("{{CONTENT}}", body_content)
-            else:
-                self.logger.warning("Engine: Base layout missing. Utilizing fallback HTML5 skeleton.")
-                final_html = f"<!DOCTYPE html>\n<html>\n<body>\n{body_content}\n</body>\n</html>"
+            with open(manifest_path, 'r', encoding='utf-8') as f:
+                self.manifest = json.load(f)
+            self.model = self.manifest.get("model", "qwen2.5-coder:7b")
+        except FileNotFoundError:
+            logging.error(f"ENGINE: {manifest_path} not found. Reverting to default configurations.")
+            self.model = "qwen2.5-coder:7b"
+            self.manifest = {}
 
-            # Persist finalized artifact to disk
-            with open(self.output_path, 'w', encoding=self.encoding) as f:
-                f.write(final_html)
+        self.output_dir = "output"
+        self.preview_dir = os.path.join(self.output_dir, "previews")
+
+    def stitch_all(self, sanitized_plan, design_tokens, output_override=None):
+        """
+        Synthesizes the final HTML based on structural logic and visual tokens.
+        Utilizes output_override to support multi-variant preview generation.
+        """
+        logging.info(f"ENGINE: Executing assembly for variant: {design_tokens.get('variant_name', 'Final')}")
+        
+        # Determine destination: standard output or preview subdirectory
+        target_path = output_override if output_override else os.path.join(self.output_dir, "index.html")
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+
+        construction_prompt = f"""
+        ACT AS: Senior Frontend Architect.
+        MODEL_CONTEXT: {self.model}
+        STRUCTURAL_PLAN: {json.dumps(sanitized_plan)}
+        DESIGN_TOKENS: {json.dumps(design_tokens)}
+        
+        TASK: Generate a high-performance index.html using Tailwind CSS.
+        STYLING_RULES:
+        - Primary Color: {design_tokens.get('colors', {}).get('primary', '#333')}
+        - Font: {design_tokens.get('typography', {}).get('heading', 'sans-serif')}
+        - Components: {self.manifest.get('available_components', [])}
+
+        NOTE: Follow the STRUCTURAL_PLAN strictly. Return ONLY raw HTML/CSS.
+        """
+
+        try:
+            response = ollama.generate(model=self.model, prompt=construction_prompt)
+            html_content = response['response']
+
+            with open(target_path, "w", encoding="utf-8") as f:
+                f.write(html_content)
             
-            self.logger.info(f"Engine: Assembly successful. Production artifact persisted to {self.output_path}")
-            return self.output_path
-            
+            return target_path 
         except Exception as e:
-            self.logger.error(f"Engine: Critical failure during document finalization: {e}")
-            raise
+            logging.error(f"ENGINE: Synthesis failure at {target_path}: {e}")
+            return None
 
-if __name__ == "__main__":
-    """
-    INTERNAL MODULE VALIDATION:
-    Performs a controlled test of the assembly sequence using a standard manifest.
-    """
-    engine_test = AssemblyEngine()
-    mock_plan = ["hero", "footer"]
-    engine_test.stitch_all(mock_plan)
+    def generate_previews(self, sanitized_plan, variants):
+        """
+        Batch-processes multiple design directions to create a suite of 
+        interactive HTML instances for comparison.
+        """
+        logging.info("ENGINE: Commencing batch generation of 5 design previews.")
+        preview_paths = []
+        
+        for i, variant in enumerate(variants):
+            file_name = f"variant_{i}.html"
+            preview_path = os.path.join(self.preview_dir, file_name)
+            
+            # Recursive call to stitch_all with the specific variant data
+            result = self.stitch_all(sanitized_plan, variant, output_override=preview_path)
+            if result:
+                preview_paths.append(result)
+        
+        return preview_paths
+
+    def build_gallery(self, preview_paths):
+        """
+        Constructs an interactive Selection Hub (gallery.html) that serves as 
+        the visual interface for design approval.
+        """
+        logging.info("ENGINE: Finalizing Selection Gallery for stakeholder review.")
+        
+        cards_html = ""
+        for i, path in enumerate(preview_paths):
+            file_name = os.path.basename(path)
+            cards_html += f"""
+            <div style="background: #111; border: 1px solid #333; padding: 25px; border-radius: 12px; transition: 0.3s hover;">
+                <h3 style="color: #00FF41; margin-top: 0; letter-spacing: 1px;">VARIANT {i}</h3>
+                <p style="color: #888; font-size: 0.9em; margin-bottom: 20px;">Deterministic layout via Qwen2.5-Coder.</p>
+                <a href="{file_name}" target="_blank" style="display: inline-block; background: #3B82F6; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                    Open Preview
+                </a>
+            </div>
+            """
+
+        gallery_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Stitcher-Core | Design Review</title>
+            <style>
+                body {{ background-color: #000; color: #FFF; font-family: 'Segoe UI', sans-serif; padding: 60px; }}
+                .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }}
+                h1 {{ font-size: 2.5em; font-weight: 900; border-left: 5px solid #3B82F6; padding-left: 20px; margin-bottom: 50px; }}
+            </style>
+        </head>
+        <body>
+            <h1>DESIGN SELECTION HUB</h1>
+            <div class="grid">{cards_html}</div>
+            <div style="margin-top: 60px; padding: 20px; background: #1a1a1a; border-radius: 8px; text-align: center;">
+                <p style="color: #AAA;">Review the variants above. Return to your CLI to input the ID of your choice.</p>
+            </div>
+        </body>
+        </html>
+        """
+        
+        gallery_file = os.path.join(self.preview_dir, "gallery.html")
+        with open(gallery_file, "w", encoding="utf-8") as f:
+            f.write(gallery_html)
+            
+        return gallery_file
