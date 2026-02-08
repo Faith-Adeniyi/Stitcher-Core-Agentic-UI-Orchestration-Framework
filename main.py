@@ -36,8 +36,11 @@ class StitcherCoreApp:
         self.start_time = time.time()
         
         try:
-            with open(self.manifest_path, 'r', encoding='utf-8') as f:
+            with open(self.manifest_path, 'r', encoding='utf-8', errors='replace') as f:
                 self.manifest = json.load(f)
+        except Exception as e:
+            logging.error(f"MANIFEST_INGESTION_ERROR: {e}")
+            self.manifest = {"engine_settings": {"output_path": "output/index.html"}}
         except FileNotFoundError:
             logging.error("CRITICAL: project_manifest.json missing.")
             self.manifest = {"engine_settings": {"output_path": "output/index.html"}}
