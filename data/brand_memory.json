@@ -1,25 +1,42 @@
 {
     "brand_name": "Stitcher-Core: Secured Agentics",
     "owner_name": "Faith Adeniyi",
-    "mission": "Pioneering secure, autonomous AI systems with a focus on defensive engineering.",
+    "industry": "Agentic AI Security & Defensive Engineering",
+    "mission": "Pioneering secure, autonomous AI systems by enforcing deterministic auditing layers and local-first data sovereignty.",
+    "technical_stack": ["Ollama", "Qwen2.5-Coder", "Llama3.2", "Python Asyncio", "Tailwind CSS"],
     "core_pillars": [
         {
-            "title": "Defensive AI Generation",
-            "description": "Utilizing deterministic auditing layers to mitigate AI hallucinations and secure output integrity."
+            "title": "Adversarial Robustness",
+            "description": "Implementing real-time auditing via the AgenticGuardian to detect and neutralize prompt injection and malformed logic."
         },
         {
-            "title": "Agentic Orchestration",
-            "description": "Orchestrating specialized LLMs (Qwen/Llama) via a central, manifest-driven control layer."
+            "title": "Asynchronous Multi-Agent Orchestration",
+            "description": "Coordinating specialized sub-agents through a non-blocking control layer for high-throughput, low-latency artifact generation."
         },
         {
-            "title": "Privacy-First Deployment",
-            "description": "Leveraging local inference (Ollama) to ensure data sovereignty and eliminate external API vulnerabilities."
+            "title": "Data Sovereignty & Local Inference",
+            "description": "Exclusively utilizing local inference engines to eliminate third-party data leaks and maximize privacy-first execution."
+        },
+        {
+            "title": "Self-Healing Architecture",
+            "description": "Utilizing recursive feedback loops to identify structural failures and autonomously apply patches without human intervention."
         }
     ],
-    "vibe": "Industrial-Cyber, Minimalist, High-Security",
+    "brand_values": {
+        "vibe": "Cyber-Industrial, High-Contrast, Minimalist-Professional",
+        "primary_color": "#00FF41",
+        "secondary_color": "#0D0D0D",
+        "typography": "JetBrains Mono / Inter"
+    },
+    "portfolio_highlights": [
+        "Deterministic HTML/CSS Assembly Engine",
+        "Autonomous Agentic Debugger with Recursive Repair",
+        "Cognitive Trace Logging for AI Auditability"
+    ],
     "contact_info": {
         "email": "faithadeniyi2026@gmail.com",
         "github": "https://github.com/Faith-Adeniyi",
-        "linkedin": "www.linkedin.com/in/faith-adeniyi-a3979a195"
+        "linkedin": "www.linkedin.com/in/faith-adeniyi-a3979a195",
+        "location": "Remote / Hybrid (Global)"
     }
 }

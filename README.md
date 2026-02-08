@@ -1,83 +1,106 @@
-```markdown
-# 🧵 Stitcher-Core | Agentic Web Assembly Framework
-
-**Project State:** MVP Phase (Sprint 2 Complete)  
-**Last Updated:** February 7, 2026  
-**Goal:** Reach "Job-Ready" Portfolio Status by March 2026.
 
 ---
 
-## 🏗 System Architecture
-Stitcher-Core is a multi-agent framework designed to automate the transition from brand research to high-performance web deployment.
-```
+# **Stitcher-Core | Agentic Web-Assembly Orchestrator**
+
+**Stitcher-Core** is an advanced autonomous framework for the rapid synthesis of brand-aligned web interfaces. By leveraging asynchronous multi-agent orchestration and self-healing logic, it transforms raw brand intelligence into production-ready, security-audited HTML/Tailwind artifacts.
+
+---
+
+### 1. System Architecture
+
+The framework utilizes a specialized agentic hierarchy to decouple research, design synthesis, and code assembly, ensuring deterministic output from non-deterministic LLMs.
 
 ```mermaid
 graph TD
-    A[User CLI Entry] --> B{Design Source?}
+    A[CLI Input] --> B{Execution Mode}
     
-    %% AI Path
-    B -->|Option 1: AI| C[Niche Research Agent]
-    C --> D[5-Variant Generator]
-    D --> E[Gallery Selection Hub]
-    E -->|User Selection| F[UI Orchestrator]
+    subgraph "Phase 1: Intelligence & Trace"
+    B -->|Mode 1: Full| C[WebResearcher: Niche Analysis]
+    C --> D[UIDesigner: Parallel Variant Generation]
+    D --> E{JSON Valid?}
+    E -->|No| F[Self-Healing Loop: AI Repair]
+    F --> E
+    E -->|Yes| G[5x Design Tokens + Trace Log]
+    G -.->|Async Write| T[(Cognitive Trace JSON)]
+    end
 
-    %% Human Path
-    B -->|Option 2: Human| G[Figma/URL Ingestion]
-    G -->|Context Handoff| F
+    subgraph "Phase 2: High-Concurrency Assembly"
+    G --> H[AssemblyEngine: Async Code Generation]
+    H --> I[Selection Gallery Hub]
+    I --> J[Human Approval: Variant ID Selection]
+    end
 
-    %% Engine Path
-    F -->|Layout Blueprint| H(AgenticGuardian)
-    H -->|Sanitized Plan| I(AssemblyEngine)
-    I --> J[Production index.html]
-    J --> K(AgenticDebugger)
-    K -->|Self-Healing| J
+    subgraph "Phase 3: Security & Self-Healing"
+    J --> K[AgenticGuardian: Security Audit]
+    K --> L[Stitcher Engine: index.html Assembly]
+    L --> M[AgenticDebugger: HTML Diagnostic]
+    M -->|Errors| N[Autonomous Patching]
+    N --> O[Final Artifact]
+    M -->|Clean| O
+    end
+
+    subgraph "Diagnostic Utility"
+    B -->|Mode 4| P[CLI Trace Viewer]
+    T -.->|Read| P
+    end
+
 ```
 
 ---
 
-## 🚀 Core Features
+### 2. Core Engineering Capabilities
 
-* **Autonomous Research Loop:** The `UIDesigner` performs real-time market research on your specified niche to ensure design competitiveness.
-* **Variant Selection Hub:** Generates 5 distinct design directions and hosts them in a local browser-based gallery for stakeholder approval.
-* **Human-Agent Collaboration:** Supports manual overrides via Figma or external design URLs.
-* **Resource Management:** Optimized "Patch" mode to bypass high-compute generation cycles when making minor iterative changes.
+#### **Asynchronous Concurrency**
 
----
+Engineered for scale using `asyncio`. The system triggers parallel inference tasks across 5 distinct design directions, optimizing compute utilization and reducing the time-to-market for UI iterations.
 
-## 🛠 Setup & Execution
+#### **Autonomous Self-Healing (Recursive Repair)**
 
-### 1. Requirements
+Implements a feedback-loop architecture where agents monitor their own output.
 
-* **Python 3.10+**
-* **Ollama** (Models: `qwen2.5-coder:7b` & `llama3.2:1b`)
-* **Tailwind CSS** (via CDN in generated files)
+* **JSON Integrity:** Automatic detection and repair of malformed schema via `JSONDecodeError` feedback.
+* **HTML Diagnostics:** Post-assembly audit scans for structural integrity and Tailwind CSS conflicts, applying autonomous hot-fixes before final deployment.
 
-### 2. Installation
+#### **Enterprise Observability**
 
-```bash
-git clone [https://github.com/YOUR_USERNAME/stitcher-core.git](https://github.com/YOUR_USERNAME/stitcher-core.git)
-cd stitcher-core
-pip install -r requirements.txt
-
-```
-
-### 3. Running the Pipeline
-
-```bash
-python main.py
-
-```
-
-*Follow the CLI prompts to choose between **Full Overhaul**, **Figma Override**, or **Resource Patch**.*
+The **Cognitive Trace** engine documents the rationale behind every design choice (color theory, font selection, layout hierarchy). This provides an auditable "Decision Trail," bridging the gap between AI black-box output and human-led engineering requirements.
 
 ---
 
-🛡 System Integrity & Engineering Standards
+### 3. Technical Stack & Agent Hierarchy
 
-    Deterministic State Management: Implements strict type-safety and standardized logic flows to ensure predictable agent behavior across high-latency LLM calls.
+| Agent | Responsibility | Core Model |
+| --- | --- | --- |
+| **Researcher** | Competitive Analysis & Brand Intelligence Extraction | Llama 3.2:1b |
+| **UIDesigner** | Visual Token Synthesis & Parallel Prototyping | Llama 3.2:1b |
+| **Guardian** | Security Sanitization & Prompt Injection Mitigation | Deterministic |
+| **Engine** | High-Fidelity Tailwind/HTML Code Assembly | Qwen 2.5-Coder:7b |
+| **Debugger** | Post-Build Diagnostic Audit & Patching | Qwen 2.5-Coder:7b |
 
-    Agentic Observability: Comprehensive logging at the "Cognitive Layer" provides a full audit trail of agent reasoning, from niche research to final assembly.
+---
 
-    Computational Resource Optimization: Features a tiered execution strategy (Overhaul vs. Patch) to minimize token consumption and local compute overhead.
+### 4. Operational Modes
 
-    Dynamic Context Injection: Utilizes BOLD UPPERCASE semantic placeholders to ensure safe and accurate data hydration during the final assembly phase.
+1. **AI Overhaul:** Full research-to-code pipeline with 5-variant parallel generation.
+2. **Human Override:** Injection of Figma or external design references into the agentic context.
+3. **Targeted Patch:** Resource-efficient mode for content updates using cached design tokens.
+4. **Trace Audit:** Real-time CLI inspection of the AI’s cognitive decision logs.
+
+---
+
+### 5. SYSTEM EFFICIENCY
+
+* **Optimized Concurrency:** Utilizes asyncio for non-blocking I/O, allowing the system to manage multiple inference streams simultaneously, maximizing hardware utilization.
+
+* **Resource Management:** Modular design allows for the TARGETED_PATCH mode, which bypasses heavy LLM research and design phases to minimize compute load during minor UI updates.
+
+* **Adaptive Scaling:** Lightweight model selection (Llama 3.2:1b) ensures the pipeline remains functional on consumer-grade hardware while maintaining high-fidelity output.
+
+---
+
+### 6. Development Standards
+
+* **Variable Strategy:** **BOLD UPPERCASE** placeholders for deterministic injection.
+* **Logging:** Professional-grade cognitive trace logging for auditability.
+* **Deployment:** Modular structure designed for containerized environments.
