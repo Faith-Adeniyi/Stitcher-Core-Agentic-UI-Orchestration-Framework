@@ -14,17 +14,22 @@ env/
 .env
 
 # Build Artifacts
-# Preserves the directory structure without tracking generated site files.
-output/*
+output/**
 !output/.gitkeep
 
 # Local Data and Intelligence
-data/
+data/**
+!data/
+!data/brand_memory.json
+!data/cognitive_trace.json
+!data/.gitkeep
 
-# System Logs and Debugging
+# Telemetry and Session Reports (Ignored for a clean Repo)
+telemetry_report.json
+security_audit.log
 *.log
 npm-debug.log*
 
-# OS-Specific Files (Crucial for cross-platform collaboration)
+# OS-Specific Files
 .DS_Store
 Thumbs.db

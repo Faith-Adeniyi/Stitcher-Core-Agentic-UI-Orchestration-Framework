@@ -2,20 +2,17 @@ import json
 import os
 import ollama
 import logging
+from datetime import datetime
 
 class UIOrchestrator:
     """
     COGNITIVE ORCHESTRATION LAYER:
-    Utilizes a dual-model inference strategy to separate architectural reasoning 
-    from narrative brand development.
+    Utilizes a dual-model inference strategy with persistent state management.
     """
     def __init__(self, config=None, manifest_path="project_manifest.json"):
-        """
-        Initializes the Orchestrator utilizing configurations from the global manifest.
-        """
         self.logger = logging.getLogger("StitcherCore.Orchestrator")
+        self.manifest_path = manifest_path
         
-        # Load from manifest if no specific config is injected
         if config is None and os.path.exists(manifest_path):
             try:
                 with open(manifest_path, 'r', encoding='utf-8') as f:
@@ -27,79 +24,77 @@ class UIOrchestrator:
         else:
             self.config = config or {}
 
-        # Dual-Model Mapping
         self.coder_model = self.config.get("model", "qwen2.5-coder:7b")
         self.writer_model = self.config.get("writing_model", "llama3.2:1b")
-        
         self.available_components = self.config.get("available_components", ["hero", "footer"])
         self.role = self.config.get("role", "Web Architect")
         
-        self.system_prompt = (
-            f"You are a {self.role}. Return a structured JSON plan for a website layout. "
-            f"Utilize only these components: {self.available_components}."
-        )
+        # PERSISTENCE: Initialize Build State
+        self.state_file = "data/build_state.json"
+        self._ensure_state_exists()
+
+    def _ensure_state_exists(self):
+        if not os.path.exists("data"):
+            os.makedirs("data")
+        if not os.path.exists(self.state_file):
+            with open(self.state_file, 'w') as f:
+                json.dump({"completed_steps": [], "cached_plan": []}, f)
+
+    def log_cognitive_trace(self, thought, decision):
+        """TELEMETRY: Logs the AI reasoning process."""
+        trace = {
+            "timestamp": datetime.now().isoformat(),
+            "model": self.coder_model,
+            "thought": thought,
+            "decision": decision
+        }
+        with open("logs/cognitive_trace.log", "a") as f:
+            f.write(json.dumps(trace) + "\n")
 
     def generate_plan(self, brand_data, design_tokens):
-        """
-        Analyzes brand intelligence alongside design constraints 
-        to architect a structural layout plan.
-        """
-
         self.logger.info(f"ORCHESTRATOR: Initiating structural inference via {self.coder_model}")
         
+        # Check if we can skip this based on State
+        with open(self.state_file, 'r') as f:
+            state = json.load(f)
+            if "ORCHESTRATION" in state["completed_steps"]:
+                self.logger.info("STATE: Plan found in cache. Resuming...")
+                return state["cached_plan"]
+
         prompt = (
             f"Contextual Business Data: {json.dumps(brand_data)}\n"
-            "Requirement: Return a JSON array representing the sequential order of UI components.\n"
+            "Requirement: Return a JSON array of UI components in sequential order.\n"
             f"Format: ['component1', 'component2', ...]"
         )
 
         try:
             response = ollama.generate(
                 model=self.coder_model,
-                system=self.system_prompt,
+                system=f"You are a {self.role}. Components: {self.available_components}",
                 prompt=prompt,
                 format="json"
             )
             
             plan = json.loads(response.get('response', '[]'))
+            self.log_cognitive_trace("Analyzing brand data for optimal layout flow.", f"Blueprint: {plan}")
             
-            if not isinstance(plan, list):
-                raise ValueError("Inference returned non-list structure.")
+            # Save to State
+            state["completed_steps"].append("ORCHESTRATION")
+            state["cached_plan"] = plan
+            with open(self.state_file, 'w') as f:
+                json.dump(state, f)
                 
-            self.logger.info(f"ORCHESTRATOR: Design blueprint finalized: {plan}")
             return plan
-
         except Exception as e:
-            self.logger.error(f"ORCHESTRATOR: Structural inference failure: {e}")
+            self.logger.error(f"ORCHESTRATOR: Failure: {e}")
             return [self.available_components[0], self.available_components[-1]]
 
     def refine_copy(self, raw_text):
-        """
-        Uses the specialized WRITER model to professionalize brand narratives.
-        """
-        self.logger.info(f"ORCHESTRATOR: Refining narrative via {self.writer_model}")
         try:
             response = ollama.generate(
                 model=self.writer_model,
-                prompt=f"Rewrite the following for a senior AI Engineer portfolio. Keep it concise: {raw_text}"
+                prompt=f"Rewrite for a senior AI Engineer portfolio: {raw_text}"
             )
             return response['response']
         except Exception as e:
-            self.logger.error(f"ORCHESTRATOR: Narrative refinement failure: {e}")
             return raw_text
-
-if __name__ == "__main__":
-    """
-    INTERNAL MODULE VALIDATION:
-    Tests the dual-model routing logic using default manifest settings.
-    """
-    orchestrator = UIOrchestrator()
-    sample_data = {"brand": "Stitcher-Core", "niche": "Agentic AI"}
-    
-    # Test Coder Model
-    test_plan = orchestrator.generate_plan(sample_data)
-    print(f"Coder Plan: {test_plan}")
-    
-    # Test Writer Model
-    test_copy = orchestrator.refine_copy("I build cool AI things with python.")
-    print(f"Writer Refinement: {test_copy}")

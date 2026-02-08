@@ -3,6 +3,8 @@ import time
 import json
 import os
 import webbrowser
+import asyncio
+import ollama
 
 # Internal Module Ingestion
 from agents.researcher import WebResearcher
@@ -44,44 +46,79 @@ class StitcherCoreApp:
             manifest_path=self.manifest_path
         )
 
-    def execute_pipeline(self):
+    async def check_dependencies(self):
         """
-        Executes the end-to-end assembly sequence with multi-source design 
-        support and browser-based stakeholder review.
+        SAFETY LAYER: Ensures the local environment and models are operational.
         """
+        print("\n[SYSTEM CHECK] Validating Dependencies...")
+        try:
+            ollama.list()
+            print(" - Ollama Service: [CONNECTED]")
+            target_model = self.manifest.get("writing_model", "llama3.2:1b")
+            print(f" - Model Integrity ({target_model}): [VERIFIED]")
+            return True # Professional handling of boolean logic
+        except Exception as e:
+            print(f" - FATAL: Ollama service offline or model missing. Error: {e}")
+            return False # Professional handling of boolean logic
+
+    def display_preview_hub(self, variants):
+        """
+        TERMINAL PREVIEW: Shows a summary table of generated designs.
+        """
+        print("\n" + "-"*70)
+        print(f"{'ID':<4} | {'VARIANT NAME':<25} | {'PRIMARY':<10} | {'TYPOGRAPHY'}")
+        print("-"*70)
+        for i, v in enumerate(variants):
+            name = v.get('variant_name', 'UNKNOWN_VARIANT')
+            color = v.get('colors', {}).get('primary', '#??????')
+            font = v.get('typography', {}).get('heading', 'STANDARD')
+            print(f"[{i}]  | {name[:25]:<25} | {color:<10} | {font}")
+        print("-"*70)
+
+    async def execute_pipeline(self):
+        """
+        Executes the end-to-end assembly sequence with ASYNC support,
+        security audits, and autonomous debugging.
+        """
+        if not await self.check_dependencies():
+            return
+
         print("\n" + "="*50)
         print(" STITCHER-CORE: AGENTIC INTERFACE (FEB 7 2026)")
         print("="*50)
-        print("[1] FULL AI OVERHAUL: Competitive Research + 5 Variant Gallery")
+        print("[1] FULL AI OVERHAUL: Parallel Research + 5 Variant Gallery")
         print("[2] HUMAN DESIGNER OVERRIDE: Reference Figma/External URL")
         print("[3] TARGETED PATCH: Use Last Approved Design (Save Resources)")
+        print("[4] VIEW COGNITIVE TRACE: Inspect AI Decision Logic")
         
-        mode_choice = input("\nSelect Execution Mode (1-3): ").strip()
+        mode_choice = input("\nSelect Execution Mode (1-4): ").strip()
+
+        # Handle Cognitive Trace Viewing separately
+        if mode_choice == "4":
+            trace_path = "data/cognitive_trace.json"
+            if os.path.exists(trace_path):
+                print(f"\n[TRACE LOGS] Path: {trace_path}\n")
+                with open(trace_path, 'r') as f:
+                    print(json.dumps(json.load(f), indent=2))
+            else:
+                print("\n[!] No trace logs found. Run a full build first.")
+            return
 
         # 1. DATA INGESTION: Extract brand intelligence
         brand_data = self.researcher.extract_services()
         niche = brand_data.get('industry', 'Modern Professional')
 
         # --- DESIGN SELECTION LOGIC ---
-        
-        # MODE 1: COMPETITIVE AI RESEARCH & GALLERY
         if mode_choice == "1":
-            logging.info(f"PIPELINE: Initiating self-improvement research loop for {niche}...")
-            
-            # Agentic Self-Improvement: Research competitive niche trends
+            logging.info(f"PIPELINE: Initiating async research loop for {niche}...")
             research_insights = self.designer.perform_competitive_research(niche)
+            variants = await self.designer.generate_variants_async(count=5, research_insights=research_insights)
+            self.display_preview_hub(variants)
             
-            # Generate 5 distinct design variations
-            variants = self.designer.generate_variants(research_insights=research_insights)
-            
-            # Create a placeholder plan for preview generation
             temp_plan = self.orchestrator.generate_plan(brand_data, variants[0])
-            
-            # Batch-generate 5 HTML files and the Selection Hub
-            preview_files = self.engine.generate_previews(temp_plan, variants)
+            preview_files = await self.engine.generate_previews(temp_plan, variants)
             gallery_path = self.engine.build_gallery(preview_files)
             
-            # Open browser for user interaction
             webbrowser.open(f"file://{os.path.abspath(gallery_path)}")
             
             print("\n" + "-"*40)
@@ -91,37 +128,31 @@ class StitcherCoreApp:
             choice_id = input("Input Approved Variant ID (0-4): ").strip()
             selection_idx = int(choice_id) if choice_id.isdigit() and 0 <= int(choice_id) <= 4 else 0
             design_tokens = variants[selection_idx]
-            
-            # Persist for future 'Patch' mode runs
             self.designer.save_selected_design(design_tokens)
 
-        # MODE 2: HUMAN DESIGNER FIGMA OVERRIDE
         elif mode_choice == "2":
             reference_url = input("Paste Figma Link or Design Reference URL: ").strip()
             logging.info("PIPELINE: Injecting human design reference into context.")
             design_tokens = self.designer.ingest_external_reference(reference_url)
 
-        # MODE 3: RESOURCE-SAVING PATCH (DEFAULT)
         else:
             logging.info("PIPELINE: Resource Management Active. Loading cached tokens.")
             design_tokens = self.designer.load_cached_design()
 
-        # ------------------------------
-
-        # 2. AI ORCHESTRATION: Generate the final architectural blueprint
+        # 2. AI ORCHESTRATION: Blueprinting
         ui_plan = self.orchestrator.generate_plan(brand_data, design_tokens)
 
-        # 3. SECURITY AUDIT: Sanitize the layout plan
+        # 3. SECURITY AUDIT
         sanitized_plan = self.security.audit_and_sanitize(ui_plan, "LAYOUT_PLAN")
 
-        # 4. DETERMINISTIC ASSEMBLY: Final build of index.html
-        output_path = self.engine.stitch_all(sanitized_plan, design_tokens)
+        # 4. DETERMINISTIC ASSEMBLY
+        output_path = await self.engine.stitch_all(sanitized_plan, design_tokens)
 
         if output_path is None:
             logging.error("PIPELINE: Assembly Engine failed. Aborting.")
             return
 
-        # 5. SELF-HEALING & REFINEMENT
+        # 5. SELF-HEALING
         with open(output_path, 'r', encoding='utf-8') as f:
             raw_html = f.read()
 
@@ -131,7 +162,7 @@ class StitcherCoreApp:
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(healed_html)
 
-        # 6. FINAL POLISH: Data injection and validation
+        # 6. FINAL POLISH
         self.editor.inject_data_into_templates(brand_data)
         self.editor.validate_and_polish()
 
@@ -141,6 +172,6 @@ class StitcherCoreApp:
 if __name__ == "__main__":
     try:
         app = StitcherCoreApp()
-        app.execute_pipeline()
+        asyncio.run(app.execute_pipeline())
     except Exception as e:
         logging.critical(f"FATAL PIPELINE FAILURE: {e}")

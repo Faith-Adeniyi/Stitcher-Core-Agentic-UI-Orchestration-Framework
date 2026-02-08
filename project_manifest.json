@@ -1,60 +1,72 @@
 {
     "project_meta": {
-        "name": "Stitcher-Core Professional Portfolio",
+        "name": "Stitcher-Core: Agentic Orchestration Framework",
         "owner": "Faith Adeniyi",
-        "target_deadline": "2026-03-31"
+        "target_deadline": "2026-03-31",
+        "version": "2.0.0-Stable"
     },
     "orchestrator_settings": {
-        "model": "qwen2.5-coder:7b", 
+        "model": "qwen2.5-coder:7b",
         "writing_model": "llama3.2:1b",
-        "role": "Lead Technical Recruiter & Web Architect",
+        "role": "Senior Agentic Systems Architect",
         "available_components": [
-            "hero_section", 
-            "tech_stack_grid", 
-            "agent_terminal_demo"
+            "hero_section",
+            "tech_stack_grid",
+            "agent_terminal_demo",
+            "project_gallery",
+            "cognitive_trace_viewer"
         ]
     },
     "researcher_settings": {
         "source_data": "data/brand_memory.json",
-        "depth": "comprehensive"
+        "depth": "comprehensive",
+        "competitor_analysis": true
     },
     "ui_ux_settings": {
         "variants_count": 5,
+        "max_concurrent_tasks": 2,
+        "vibe": "Cyber-Industrial-Professional",
         "default_theme": "Modern-Dark-Agentic",
-        "enable_3d": true
+        "trace_logging": true,
+        "trace_path": "data/cognitive_trace.json"
     },
     "debugger_settings": {
-    "enabled": true,
-    "log_level": "INFO",
-    "enforced_tags": ["div", "section", "main"],
-    "clean_empty_classes": true,
-    "repair_truncated_tags": true
-},
-"editor_settings": {
-    "template_dir": "templates/components",
-    "placeholders": {
-        "{{BRAND_NAME}}": "brand",
-        "{{MISSION_STMT}}": "mission",
-        "{{OWNER_NAME}}": "owner_name"
+        "enabled": true,
+        "log_level": "INFO",
+        "enforced_tags": ["div", "section", "main", "footer", "nav"],
+        "clean_empty_classes": true,
+        "repair_truncated_tags": true,
+        "max_repair_attempts": 2
     },
-    "polish_artifacts": ["PLACEHOLDER", "AI_GENERATED_TEXT", "DEBUG_NOTE"]
-},
-"security_settings": {
-    "max_payload_size": 500000,
-    "enforce_strict_types": true,
-    "blacklisted_patterns": [
-        "<script.*?>",
-        "onload=",
-        "onerror=",
-        "<iframe.*?>",
-        "javascript:"
-    ]
-},
-"engine_settings": {
-    "components_path": "templates/components/",
-    "base_template": "templates/base.html",
-    "output_path": "output/index.html",
-    "encoding": "utf-8"
-}
-
+    "editor_settings": {
+        "template_dir": "templates/components",
+        "output_path": "output/index.html",
+        "placeholders": {
+            "{{BRAND_NAME}}": "brand",
+            "{{MISSION_STMT}}": "mission",
+            "{{OWNER_NAME}}": "owner_name",
+            "{{LAST_BUILD_TIME}}": "current_timestamp"
+        },
+        "polish_artifacts": ["PLACEHOLDER", "AI_GENERATED_TEXT", "DEBUG_NOTE"]
+    },
+    "security_settings": {
+        "max_payload_size": 500000,
+        "enforce_strict_types": true,
+        "audit_logs_path": "data/security_audit.log",
+        "blacklisted_patterns": [
+            "<script.*?>",
+            "onload=",
+            "onerror=",
+            "eval\\(",
+            "<iframe.*?>",
+            "javascript:"
+        ]
+    },
+    "engine_settings": {
+        "components_path": "templates/components/",
+        "base_template": "templates/base.html",
+        "output_path": "output/index.html",
+        "encoding": "utf-8",
+        "minify_output": false
+    }
 }
