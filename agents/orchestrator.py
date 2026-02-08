@@ -48,7 +48,7 @@ class UIOrchestrator:
             "thought": thought,
             "decision": decision
         }
-        with open("logs/cognitive_trace.log", "a") as f:
+        with open("data/cognitive_trace.json", "a") as f:
             f.write(json.dumps(trace) + "\n")
 
     def generate_plan(self, brand_data, design_tokens):

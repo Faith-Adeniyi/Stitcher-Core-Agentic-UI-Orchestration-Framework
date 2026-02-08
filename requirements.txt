@@ -1,9 +1,15 @@
-# HTTP requests for potential future data ingestion
-requests==2.31.0
+# CORE INFRASTRUCTURE
+ollama>=0.1.6
+python-dotenv>=1.0.0
 
-# Local LLM orchestration (The core of our agents)
-ollama==0.1.6
+# ASYNC ORCHESTRATION
+# We use versionless here to find Python 3.14 compatible wheels
+aiohttp
+asyncio
 
-# Environment variable management (For securing the .env file)
-python-dotenv==1.0.0
+# DATA INGESTION & AUDIT
+requests>=2.31.0
+beautifulsoup4>=4.12.2
 
+# UTILITIES
+setuptools>=69.0.3

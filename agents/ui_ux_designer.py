@@ -13,7 +13,7 @@ class UIDesigner:
     """
     def __init__(self, manifest_path="project_manifest.json"):
         """
-        Initializes the design engine with configuration parameters from the project manifest.
+        Initializes the design engine with configuration parameters from the MANIFEST_PATH.
         """
         try:
             with open(manifest_path, 'r', encoding='utf-8') as f:
@@ -47,7 +47,6 @@ class UIDesigner:
                 with open(self.trace_path, 'r', encoding='utf-8') as f:
                     content = json.load(f)
                     
-                    # Logic validation to handle legacy dictionary schemas or standard lists
                     if isinstance(content, dict) and "logs" in content:
                         trace_data = content["logs"]
                     elif isinstance(content, list):
@@ -84,7 +83,7 @@ class UIDesigner:
             return insight
         except Exception as e:
             logging.error(f"UI_UX_AGENT: Competitive research phase failed: {e}")
-            return "Professional modern-industrial layout with high-contrast typography."
+            return "Professional modern-industrial layout with high-contrast neon accents and dark mode."
 
     async def _generate_single_variant_task(self, variant_id, research_context, retry_count=0):
         """
@@ -96,11 +95,21 @@ class UIDesigner:
         prompt = f"""
         ACT AS: Principal UI/UX Architect.
         VARIANT_ID: {variant_id}
-        DESIGN_SPECIFICATION: {vibe}
+        DESIGN_SPECIFICATION: {vibe} (Bento Grid, Dark Mode, High Contrast)
         CONTEXT: {research_context}
         
         TASK: Generate a unique UI configuration in strict JSON format.
-        SCHEMA: {{"variant_name": "STR", "colors": {{"primary": "HEX", "secondary": "HEX", "bg": "HEX"}}, "typography": {{"heading": "STR", "body": "STR"}}, "border_radius": "STR"}}
+        SCHEMA: {{
+            "variant_name": "STR", 
+            "colors": {{
+                "primary": "HEX", 
+                "secondary": "HEX", 
+                "bg": "#050505", 
+                "text": "#FFFFFF"
+            }}, 
+            "typography": {{"heading": "JetBrains Mono", "body": "Inter"}}, 
+            "border_radius": "2px"
+        }}
         """
         
         try:
@@ -113,8 +122,7 @@ class UIDesigner:
                 return data
             except json.JSONDecodeError as e:
                 if retry_count < 2:
-                    logging.warning(f"UI_UX_AGENT: Variant {variant_id} schema corruption detected. Initiating recovery cycle {retry_count + 1}...")
-                    self._log_cognitive_trace("RECOVERY_INITIATED", {"id": variant_id, "exception": str(e)})
+                    logging.warning(f"UI_UX_AGENT: Variant {variant_id} schema corruption. Recovery cycle {retry_count + 1}...")
                     return await self._fix_json_output(raw_content, str(e), variant_id, research_context, retry_count + 1)
                 raise e
 
@@ -125,7 +133,7 @@ class UIDesigner:
     async def _fix_json_output(self, bad_json, error_msg, variant_id, context, retry_count):
         """
         RECURSIVE REPAIR LOGIC:
-        Analyzes malformed output and re-synthesizes a valid JSON object based on error feedback.
+        Analyzes malformed output and re-synthesizes a valid JSON object.
         """
         repair_prompt = (
             f"The following JSON payload for variant {variant_id} failed validation.\n"
@@ -164,9 +172,9 @@ class UIDesigner:
         self._log_cognitive_trace("EXTERNAL_REFERENCE_INJECTED", {"uri": reference_url})
         return {
             "variant_name": "External_Reference_Ingestion",
-            "colors": {"primary": "REF_TARGET", "secondary": "REF_TARGET", "bg": "REF_TARGET"},
-            "typography": {"heading": "REF_TARGET", "body": "REF_TARGET"},
-            "border_radius": "REF_TARGET",
+            "colors": {"primary": "#4ade80", "secondary": "#22c55e", "bg": "#050505", "text": "#ffffff"},
+            "typography": {"heading": "JetBrains Mono", "body": "Inter"},
+            "border_radius": "2px",
             "external_link": reference_url
         }
 
@@ -201,7 +209,7 @@ class UIDesigner:
         """
         return [{
             "variant_name": f"Industrial_Standard_Backup_{i}",
-            "colors": {"primary": "#4ade80", "secondary": "#1A1A1A", "bg": "#050505"},
+            "colors": {"primary": "#4ade80", "secondary": "#1A1A1A", "bg": "#050505", "text": "#ffffff"},
             "typography": {"heading": "JetBrains Mono", "body": "Inter"},
             "border_radius": "2px"
         } for i in range(5)]
