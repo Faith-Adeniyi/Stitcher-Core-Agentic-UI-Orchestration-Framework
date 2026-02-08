@@ -1,16 +1,79 @@
-<section class="py-20 bg-black">
-    <div class="max-w-4xl mx-auto p-6 bg-slate-900 rounded-xl border border-slate-700 shadow-2xl">
-        <div class="flex items-center gap-2 mb-4 border-b border-slate-800 pb-2">
-            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-            <span class="ml-4 text-xs font-mono text-gray-500">stitcher-core --diagnostic --secure</span>
+<section class="py-20 bg-black overflow-hidden">
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-xs font-mono text-green-400">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            LIVE_AGENT_MONITOR: ACTIVE
         </div>
-        <div class="font-mono text-sm space-y-2">
-            <p class="text-green-400">[SYSTEM] Initializing Agentic Guardian...</p>
-            <p class="text-blue-400">[INFO] Auditing LLM-generated payloads for XSS/Injection...</p>
-            <p class="text-white">Professional Identity: {{OWNER_NAME}}</p>
-            <p class="text-indigo-400">Security Protocol: Active</p>
+
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+            
+            <div class="relative p-6 bg-[#0D0D0D] rounded-xl border border-slate-800 shadow-2xl font-mono">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-4">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"></div>
+                    </div>
+                    <span class="text-[10px] text-gray-500 tracking-widest uppercase">Kernel::Stitcher_v2.0 // PID: 8842</span>
+                </div>
+
+                <div class="text-sm min-h-[260px] space-y-2">
+                    <div id="terminal-logic" class="space-y-1.5">
+                        <p class="text-gray-500">>> Authenticating {{OWNER_NAME}}...</p>
+                    </div>
+                    <span class="inline-block w-2 h-4 bg-green-400 animate-pulse align-middle"></span>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center">
+                    <span class="text-[10px] text-slate-600 uppercase">Audit Data Source: data/cognitive_trace.json</span>
+                    <a href="data/cognitive_trace.json" target="_blank" 
+                       class="text-[10px] px-3 py-1 bg-slate-800 text-slate-300 rounded hover:bg-green-500 hover:text-black transition-colors duration-200">
+                       [VIEW_RAW_COGNITIVE_TRACE]
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<script>
+    const auditLogs = [
+        { text: "[SUCCESS] Identity Confirmed. Welcome, Faith.", color: "#4ade80" },
+        { text: "[INFO] Initializing Cross-Model Intelligence (Qwen/Llama)...", color: "#60a5fa" },
+        { text: "[SCAN] Analyzing Deployment Path: 'output/index.html'...", color: "#94a3b8" },
+        { text: "[CRITICAL] MALFORMED JSON DETECTED IN DESIGN_TOKENS_V5", color: "#f87171" },
+        { text: "[SYSTEM] Attempting Autonomous Recursive Repair...", color: "#fbbf24" },
+        { text: "[REPAIR] Structure Validated. Token Integrity: 100%.", color: "#4ade80" },
+        { text: "[SHIELD] Security Audit Clean. No injection points found.", color: "#818cf8" },
+        { text: "> STITCHER-CORE: SYSTEM IS STABLE. READY TO BUILD.", color: "#4ade80" }
+    ];
+
+    const terminalContainer = document.getElementById('terminal-logic');
+
+    async function startAuditSimulation() {
+        await new Promise(r => setTimeout(r, 1200));
+
+        for (const log of auditLogs) {
+            const p = document.createElement('p');
+            p.style.color = log.color;
+            p.className = "opacity-0 transition-opacity duration-300";
+            terminalContainer.appendChild(p);
+            
+            const typingSpeed = log.text.length > 40 ? 15 : 30;
+
+            for (let char of log.text) {
+                p.textContent += char;
+                await new Promise(r => setTimeout(r, typingSpeed));
+                p.className = "opacity-100";
+            }
+            const waitTime = log.text.includes("CRITICAL") ? 1500 : 700;
+            await new Promise(r => setTimeout(r, waitTime));
+        }
+    }
+
+    startAuditSimulation();
+</script>
